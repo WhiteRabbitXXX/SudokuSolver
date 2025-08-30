@@ -4,10 +4,11 @@ namespace mainspace
 {
     class main
     {
-        public static bool Solved = false;
         public static List<int> Possible = new List<int>();
+        public static bool Solved = false;
         public static int[,] field = new int[9,9];
         public static int[,] fieldRestore = new int[9,9];
+
         public static bool RowCheck(int number, int Row)
         {
             for (int x = 0; x < 9; x++)
@@ -19,6 +20,7 @@ namespace mainspace
             }
             return true;
         }
+
         public static bool ColumnCheck(int number, int Column)
         {
             for (int y = 0; y < 9; y++)
@@ -30,6 +32,7 @@ namespace mainspace
             }
             return true;
         }
+
         public static bool SquareCheck(int number, int Column, int Row)
         {
             bool process = true;
@@ -71,73 +74,7 @@ namespace mainspace
             }
             return true;
         }
-        public static void Solve()
-        {
-            Random random = new Random(); 
-            for (int y = 0; y < 9; y++)
-            {
-                for (int x = 0; x < 9; x++)
-                {
-                    if (field[y,x] == 0)
-                    {
-                        for (int i = random.Next(1,9); (SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y));)
-                        {
-                            field[y,x] = i;
-                        }
-                    }
-                }   
-            }
-        }
-        public static void PreSolve()
-        {
-            bool PreSolved = true;
-            for (int y = 0; y < 9; y++)
-            {
-                for (int x = 0; x < 9; x++)
-                {
-                    if (field[y,x] == 0)
-                    {
-                        for (int i = 1; i < 10; i++)
-                        {
-                            if (SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y))
-                            {
-                                Possible.Add(i);
-                            }
-                        }
-                        if (Possible.Count == 1)
-                        {
-                            field[y,x] = Possible[0];
-                            Possible.Clear();
-                        }
-                        else
-                        {
-                            PreSolved = false;
-                            Possible.Clear();
-                        }
-                    }
-                }   
-            }
-        }
-        public static void Resolve()
-        {
-            Random random = new Random(); 
-            for (int y = 0; y < 9; y++)
-            {
-                for (int x = 0; x < 9; x++)
-                {
-                    if (field[y,x] == 0)
-                    {
-                        for (int i = 1; i < 10; i++)
-                        {
-                            if ((SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y)))
-                            {
-                                field[y,x] = i;
-                            }
-                        }
-                    }
-                }   
-            }
-        }
+
         public static void Input()
         {
             bool work = true;
@@ -160,6 +97,7 @@ namespace mainspace
                 }
             }
         }
+
         public static void Output(int[,] matrix)
         {
             {
@@ -191,28 +129,172 @@ namespace mainspace
                 }
             }
         }
+
+        public static bool Eraser()
+        {
+            bool process = true;
+            List<int> ProblemPointY = new List<int>();
+            List<int> ProblemPointX = new List<int>();
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    if (field[y, x] == 0)
+                    {
+                        ProblemPointY.Add(y);
+                        ProblemPointX.Add(x);
+                    }
+                }
+            }
+            if ((ProblemPointY.Count == 0)&(ProblemPointX.Count == 0))
+            {
+                return true;
+            }
+            foreach (int Y in ProblemPointY)
+            {
+                for (int X = 0; X < 9; X++)
+                {
+                    field[Y, X] = 0;
+                }
+            }
+            foreach (int X in ProblemPointX)
+            {
+                for (int Y = 0; Y < 9; Y++)
+                {
+                    field[Y, X] = 0;
+                }
+            }
+            ProblemPointX.Clear();
+            ProblemPointY.Clear();
+            return false;
+        }
+
+        public static void Restore()
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (field[y, x] == 0)
+                    {
+                        field[y, x] = fieldRestore[y, x];
+                    }
+                }
+            }
+        }
+
+        public static void Solve()
+        {
+            for (int i = 1; i < 10; i++)
+            {
+                for (int j = 8; j > 3; j--)
+                {
+                    for (int y = (8 - j), x = 0; (y < 9)&&(x < (9)); x++, y++)
+                    {
+                        //Console.Write($"j {j} y {y} x {x}");
+                        //Console.WriteLine();
+                        if ((field[y,x] == 0)&(SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y)))
+                        {
+                            field[y,x] = i;
+                            //Console.WriteLine($"accept y {y} x {x} num {i}");
+                            PreSolve();
+                        }
+                    }
+                }
+                for (int u = 1; u < 5; u++)
+                {
+                    for (int x = (u), y = 0; (y < (6-u))&&(x < 6); x++, y++)
+                    {
+                        //Console.WriteLine($"u {u} y {y} x {x}");
+                        if ((field[y,x] == 0)&(SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y)))
+                        {
+                            field[y,x] = i;
+                            //Console.WriteLine($"accept y {y} x {x} num {i}");
+                            PreSolve();
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PreSolve()
+        {
+            bool PreSolved = true;
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (field[y,x] == 0)
+                    {
+                        for (int i = 1; i < 10; i++)
+                        {
+                            if (SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y))
+                            {
+                                Possible.Add(i);
+                            }
+                        }
+                        if (Possible.Count == 1)
+                        {
+                            field[y,x] = Possible[0];
+                            Possible.Clear();
+                        }
+                        else
+                        {
+                            PreSolved = false;
+                            Possible.Clear();
+                        }
+                    }
+                }   
+            }
+        }
+
+         public static void Resolve()
+        {
+            Random random = new Random(); 
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (field[y,x] == 0)
+                    {
+                        for (int i = random.Next(1,9); (SquareCheck(i, x, y)&&ColumnCheck(i, x)&&RowCheck(i, y));)
+                        {
+                            field[y,x] = i;
+                            PreSolve();
+                        }
+                    }
+                }   
+            }
+        }
+
         public static void Main()
         {
             Output(field);
             Input();
             do
             {
-                PreSolve();
-                Solve();
                 Resolve();
-                Output(field);
-                string UserCommand = Console.ReadLine();
-                if (UserCommand == "yes")
+                Solve();
+                PreSolve();
+                if (Eraser())
                 {
                     Solved = true;
                 }
-                if (UserCommand == "look restore")
+                else
                 {
-                    Output(fieldRestore);
-                    Console.WriteLine("Restored");
-                    Console.ReadLine();
+                    Restore();
                 }
+                for (int i = 0; i < 6; i++)
+                {
+                    Resolve();
+                }
+                Solve();
+                Output(field);
+                
             } while (!Solved);
+            Output(field);
+            Console.WriteLine("Solved");
+            Console.ReadLine();
         }
     }
 }
