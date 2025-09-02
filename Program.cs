@@ -187,7 +187,7 @@ namespace mainspace
         {
             for (int i = 1; i < 10; i++)
             {
-                for (int j = 8; j > 3; j--)
+                for (int j = 8; j > 0; j--)
                 {
                     for (int y = (8 - j), x = 0; (y < 9)&&(x < (9)); x++, y++)
                     {
@@ -201,7 +201,7 @@ namespace mainspace
                         }
                     }
                 }
-                for (int u = 1; u < 5; u++)
+                for (int u = 0; u < 9; u++)
                 {
                     for (int x = (u), y = 0; (y < (6-u))&&(x < 6); x++, y++)
                     {
@@ -286,7 +286,7 @@ namespace mainspace
                 }
                 for (int i = 0; i < 6; i++)
                 {
-                    Resolve();
+                    PreSolve();
                 }
                 Solve();
                 Output(field);
